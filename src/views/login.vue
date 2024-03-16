@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { loginApi } from '@/api/user';
-import { router } from '@/router';
+import router from '@/router';
 import { reactive } from 'vue';
 
 const from = reactive({
