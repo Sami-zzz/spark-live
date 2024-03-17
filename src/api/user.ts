@@ -13,9 +13,7 @@ export const registerApi = ({
   });
 };
 
-export const findUserApi = ({ id }: { id: number }) => {
-  return axios.get('/api/user/find/' + id);
-};
+// 用户登录
 export const loginApi = ({
   username,
   password,
@@ -29,8 +27,13 @@ export const loginApi = ({
   });
 };
 
+// 获取用户信息
 export const getUserInfoApi = ({ token }: { token: string }) => {
   return axios.post('/api/user/get_user_info', {
     token,
   });
+};
+
+export const findUserApi = ({ id }: { id: number }) => {
+  return axios.get('/api/user/find/' + id);
 };

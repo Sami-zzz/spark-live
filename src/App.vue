@@ -1,6 +1,7 @@
 <template>
   <n-message-provider>
     <a-config-provider
+      :locale="zhCN"
       :theme="{
         token: {
           colorPrimary: '#f80a43',
@@ -13,11 +14,16 @@
 </template>
 
 <script lang="ts" setup>
-// onMounted(() => {
-//   if (!localStorage.getItem('token')) {
-//     router.push('/login');
-//   }
-// });
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import { onMounted } from 'vue';
+import useUserStore from './store/user';
+const userStore = useUserStore();
+onMounted(() => {
+  if (localStorage.getItem('TOKEN')) {
+    userStore.token = localStorage.getItem('TOKEN') as string;
+    userStore.fetchUserInfoAction(userStore.token);
+  }
+});
 </script>
 
 <style lang="scss" scoped></style>

@@ -26,7 +26,7 @@ import { fetchRtcV1Publish } from '@/api/srs';
 import { getUserInfoApi } from '@/api/user';
 import { IUser } from '@/interface';
 import { WebRTCClass } from '@/network/webrtc';
-import { router } from '@/router';
+import router from '@/router';
 
 const rtc = ref<WebRTCClass>();
 const videoRef = ref<HTMLVideoElement>();

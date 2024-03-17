@@ -10,6 +10,7 @@
       <div class="nav">
         <ul>
           <li>首页</li>
+          <li v-if="userStore.isLogin">个人中心</li>
         </ul>
       </div>
     </div>
@@ -23,67 +24,126 @@
       </div>
 
       <ul class="user">
-        <li @click="handleLoginClick">登录</li>
-        <a-modal
-          v-model:open="loginModalOpen"
-          title="登录"
-          @ok="login"
+        <div
+          class="user-login"
+          v-if="!userStore.isLogin"
         >
-        </a-modal>
-        <li @click="handleRegisterClick">注册</li>
-        <a-modal
-          v-model:open="registerModalOpen"
-          title="注册"
-        >
-          <a-form
-            ref="registerFormRef"
-            :model="registerForm"
-            :rules="rules"
-            name="register"
-            :label-col="{ span: 5 }"
-            :wrapper-col="{ span: 16 }"
-            autocomplete="off"
-            @finish="handleRegisterFinish"
-            @finishFailed="handleRegisterFinishFailed"
+          <!-- 登录模块 -->
+          <li @click="handleLoginClick">登录</li>
+          <a-modal
+            v-model:open="loginModalOpen"
+            title="登录"
           >
-            <a-form-item
-              has-feedback
-              label="用户名"
-              name="username"
+            <a-form
+              ref="loginFormRef"
+              :model="loginForm"
+              :rules="loginRules"
+              name="login"
+              :label-col="{ span: 5 }"
+              :wrapper-col="{ span: 16 }"
+              autocomplete="off"
+              @finish="handleLoginFinish"
             >
-              <a-input v-model:value="registerForm.username" />
-            </a-form-item>
-
-            <a-form-item
-              has-feedback
-              label="密码"
-              name="password"
-            >
-              <a-input-password v-model:value="registerForm.password" />
-            </a-form-item>
-
-            <a-form-item
-              label="确认密码"
-              name="confirmPassword"
-            >
-              <a-input-password v-model:value="registerForm.confirmPassword" />
-            </a-form-item>
-
-            <a-form-item :wrapper-col="{ span: 16, offset: 4 }">
-              <a-button
-                @click="resetRegisterForm"
-                style="margin-right: 10px"
-                >重置</a-button
+              <a-form-item
+                has-feedback
+                label="用户名"
+                name="username"
               >
-              <a-button
-                type="primary"
-                html-type="submit"
-                >注册</a-button
+                <a-input v-model:value="loginForm.username" />
+              </a-form-item>
+
+              <a-form-item
+                has-feedback
+                label="密码"
+                name="password"
               >
-            </a-form-item>
-          </a-form>
-          <template #footer></template>
-        </a-modal>
+                <a-input-password v-model:value="loginForm.password" />
+              </a-form-item>
+
+              <a-form-item :wrapper-col="{ span: 16, offset: 4 }">
+                <a-button
+                  @click="resetLoginForm"
+                  style="margin-right: 10px"
+                  >重置</a-button
+                >
+                <a-button
+                  type="primary"
+                  html-type="submit"
+                  >登录</a-button
+                >
+              </a-form-item>
+            </a-form>
+            <template #footer></template>
+          </a-modal>
+          <!-- 注册模块 -->
+          <li @click="handleRegisterClick">注册</li>
+          <a-modal
+            v-model:open="registerModalOpen"
+            title="注册"
+          >
+            <a-form
+              ref="registerFormRef"
+              :model="registerForm"
+              :rules="rules"
+              name="register"
+              :label-col="{ span: 5 }"
+              :wrapper-col="{ span: 16 }"
+              autocomplete="off"
+              @finish="handleRegisterFinish"
+            >
+              <a-form-item
+                has-feedback
+                label="用户名"
+                name="username"
+              >
+                <a-input v-model:value="registerForm.username" />
+              </a-form-item>
+
+              <a-form-item
+                has-feedback
+                label="密码"
+                name="password"
+              >
+                <a-input-password v-model:value="registerForm.password" />
+              </a-form-item>
+
+              <a-form-item
+                label="确认密码"
+                name="confirmPassword"
+              >
+                <a-input-password
+                  v-model:value="registerForm.confirmPassword"
+                />
+              </a-form-item>
+
+              <a-form-item :wrapper-col="{ span: 16, offset: 4 }">
+                <a-button
+                  @click="resetRegisterForm"
+                  style="margin-right: 10px"
+                  >重置</a-button
+                >
+                <a-button
+                  type="primary"
+                  html-type="submit"
+                  >注册</a-button
+                >
+              </a-form-item>
+            </a-form>
+            <template #footer></template>
+          </a-modal>
+        </div>
+        <div
+          class="user-info"
+          v-if="userStore.isLogin"
+        >
+          欢迎回来 {{ username }}
+          <a-button
+            type="primary"
+            style="margin-left: 20px"
+            @click="loginout"
+            >退出登录</a-button
+          >
+        </div>
       </ul>
     </div>
   </div>
@@ -92,26 +152,77 @@
 <script setup lang="ts">
 import useUserStore from '@/store/user';
 import type { Rule } from 'ant-design-vue/es/form';
-import { reactive, ref } from 'vue';
-const registerModalOpen = ref<boolean>(false);
-const loginModalOpen = ref<boolean>(false);
+import { computed, reactive, ref } from 'vue';
+const userStore = useUserStore();
+const username = computed(() => {
+  return userStore.username;
+});
 
+// 登录模块
+//
+//
+const loginModalOpen = ref<boolean>(false);
+const loginFormRef = ref();
+const loginForm = reactive({
+  username: '',
+  password: '',
+});
+
+// 登录表单校验
+const checkLoginUsername = async (_rule: Rule, value: string) => {
+  if (!value) {
+    return Promise.reject('请输入用户名');
+  }
+  return Promise.resolve();
+};
+
+const checkLoginPassword = async (_rule: Rule, value: string) => {
+  if (!value) {
+    return Promise.reject('请输入密码');
+  }
+  return Promise.resolve();
+};
+
+const loginRules: Record<string, Rule[]> = {
+  username: [
+    { required: true, validator: checkLoginUsername, trigger: 'change' },
+  ],
+  password: [
+    { required: true, validator: checkLoginPassword, trigger: 'change' },
+  ],
+};
+
+const handleLoginClick = () => {
+  loginModalOpen.value = true;
+};
+
+const handleLoginFinish = (values) => {
+  const { username, password } = values;
+  userStore.loginAction(username, password);
+  loginModalOpen.value = false;
+  loginFormRef.value.resetFields();
+};
+
+// 重置
+const resetLoginForm = () => {
+  loginFormRef.value.resetFields();
+};
+
+// 退出登录
+const loginout = () => {
+  userStore.loginoutAction();
+};
+
+//
+// 注册模块
+//
+const registerModalOpen = ref<boolean>(false);
 const registerFormRef = ref();
 const registerForm = reactive({
   username: '',
   password: '',
   confirmPassword: '',
 });
-
-const userStore = useUserStore();
-
-const handleLoginClick = () => {
-  loginModalOpen.value = true;
-};
-const login = () => {
-  alert('登录');
-};
-
 const handleRegisterClick = () => {
   registerModalOpen.value = true;
 };
@@ -162,7 +273,6 @@ const handleRegisterFinish = (values) => {
   registerModalOpen.value = false;
   registerFormRef.value.resetFields();
 };
-const handleRegisterFinishFailed = (errors) => {};
 
 const resetRegisterForm = () => {
   registerFormRef.value.resetFields();
@@ -189,8 +299,12 @@ const startMyLive = () => {
       cursor: pointer;
     }
     .nav {
-      li {
-        cursor: pointer;
+      ul {
+        display: flex;
+        li {
+          margin-left: 40px;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -205,13 +319,16 @@ const startMyLive = () => {
       }
     }
     .user {
-      display: flex;
-      margin-right: 50px;
-      width: 140px;
-      justify-content: space-evenly;
+      width: 300px;
+      .user-login {
+        display: flex;
+        margin-right: 50px;
+        width: 140px;
+        justify-content: space-evenly;
 
-      li {
-        cursor: pointer;
+        li {
+          cursor: pointer;
+        }
       }
     }
   }

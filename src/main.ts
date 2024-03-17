@@ -12,14 +12,16 @@ import App from './App.vue';
 
 const app = createApp(App);
 const pinia = createPinia();
-app.use(router);
+//antd
+app.use(Antd);
 app.use(pinia);
+app.use(router);
+
 //使用message组件
 const message = createApp(Message);
 const messageEle = document.createElement('div');
 const appEl = document.getElementById('app');
 appEl?.appendChild(messageEle);
 message.mount(messageEle);
-//antd
-app.use(Antd);
+
 app.mount('#app');
