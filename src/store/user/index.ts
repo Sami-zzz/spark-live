@@ -4,10 +4,15 @@ import { defineStore } from 'pinia';
 const useUserStore = defineStore('user', {
   state: () => ({
     token: '',
+    id: 0,
     username: '',
     status: '',
     role_id: '',
+    push_url: '',
+    push_key: '',
+
     isLogin: false,
+    isLive: false,
   }),
   actions: {
     async registerAction(username, password) {
@@ -35,19 +40,25 @@ const useUserStore = defineStore('user', {
       if (userInfoRes.data.code === 200) {
         // window.$message.success('登录成功');
         this.isLogin = true;
+        this.id = userInfoRes.data.data.id;
         this.username = userInfoRes.data.data.username;
         this.status = userInfoRes.data.data.status;
         this.role_id = userInfoRes.data.data.role_id;
+        this.push_url = userInfoRes.data.data.push_url;
+        this.push_key = userInfoRes.data.data.push_key;
       } else {
         window.$message.error('请重新登录');
       }
     },
     loginoutAction() {
       this.isLogin = false;
+      this.id = 0;
       this.username = '';
       this.status = '';
       this.role_id = '';
       this.token = '';
+      this.push_url = '';
+      this.push_key = '';
       localStorage.removeItem('TOKEN');
       window.$message.success('成功退出');
     },

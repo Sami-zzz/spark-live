@@ -15,11 +15,24 @@
       </div>
     </div>
     <div class="live-nav-right">
-      <div class="startlive">
+      <div
+        class="live-button"
+        v-if="!userStore.isLive"
+      >
         <a-button
           type="primary"
           @click="startMyLive"
           >我 要 开 播</a-button
+        >
+      </div>
+      <div
+        class="live-button"
+        v-if="userStore.isLive"
+      >
+        <a-button
+          type="primary"
+          @click="stopMyLive"
+          >结 束 直 播</a-button
         >
       </div>
 
@@ -150,9 +163,11 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
 import useUserStore from '@/store/user';
 import type { Rule } from 'ant-design-vue/es/form';
 import { computed, reactive, ref } from 'vue';
+
 const userStore = useUserStore();
 const username = computed(() => {
   return userStore.username;
@@ -279,7 +294,15 @@ const resetRegisterForm = () => {
 };
 
 const startMyLive = () => {
-  alert('我要开播');
+  if (!userStore.isLogin) {
+    window.$message.error('请先登录');
+  } else {
+    router.push('/push');
+  }
+};
+
+const stopMyLive = () => {
+  alert('结束直播');
 };
 </script>
 
@@ -310,7 +333,7 @@ const startMyLive = () => {
   }
   .live-nav-right {
     display: flex;
-    .startlive {
+    .live-button {
       margin-right: 50px;
       button {
         width: 130px;

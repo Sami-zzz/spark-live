@@ -8,6 +8,11 @@ export const defaultRoutes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('@/views/home/index.vue'),
   },
+  {
+    path: '/push',
+    name: 'push',
+    component: () => import('@/views/push/index.vue'),
+  },
 ];
 
 const router = createRouter({
