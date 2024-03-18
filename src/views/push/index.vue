@@ -12,6 +12,13 @@
         ></video>
       </div>
     </div>
+    <a-button
+      type="primary"
+      v-if="userStore.isLive"
+      @click="stopLive"
+      class="stop-btn"
+      >关闭直播</a-button
+    >
   </div>
 </template>
 
@@ -19,6 +26,7 @@
 import { fetchRtcV1Publish } from '@/api/srs';
 import liveNav from '@/components/liveNav.vue';
 import { WebRTCClass } from '@/network/webrtc';
+import router from '@/router';
 import useUserStore from '@/store/user';
 import { onMounted, ref } from 'vue';
 const userStore = useUserStore();
@@ -40,7 +48,7 @@ async function getScreen() {
   });
   videoRef.value?.addEventListener('loadedmetadata', async () => {
     console.warn('视频流-loadedmetadata');
-    // userStore.isLive = true;
+    userStore.isLive = true;
     event.getTracks().forEach((track) => {
       rtc.value?.peerConnection?.addTrack(track, event);
     });
@@ -72,6 +80,16 @@ function startRTC() {
   getScreen();
 }
 
+const stopLive = () => {
+  userStore.isLive = false;
+  rtc.value?.peerConnection?.close();
+  let tracks = videoRef.value!.srcObject!.getTracks();
+  tracks.forEach((track) => track.stop());
+  videoRef.value!.srcObject = null;
+  window.$message.success('直播结束');
+  router.push('/');
+};
+
 onMounted(() => {
   startRTC();
 });
@@ -79,17 +97,26 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .push-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 740px;
-  background: url('@/assets/img/bg.png');
-
+  background-color: pink;
+  width: 100%;
   .push-video {
+    background-color: #ccc;
     height: 650px;
     width: 1400px;
-    margin: 0 auto;
     .live-video {
       width: 100%;
       height: 100%;
     }
   }
+}
+
+.stop-btn {
+  position: fixed;
+  top: 30px;
+  right: 400px;
 }
 </style>

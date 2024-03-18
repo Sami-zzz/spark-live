@@ -25,17 +25,6 @@
           >我 要 开 播</a-button
         >
       </div>
-      <div
-        class="live-button"
-        v-if="userStore.isLive"
-      >
-        <a-button
-          type="primary"
-          @click="stopMyLive"
-          >结 束 直 播</a-button
-        >
-      </div>
-
       <ul class="user">
         <div
           class="user-login"
@@ -299,10 +288,6 @@ const startMyLive = () => {
   } else {
     router.push('/push');
   }
-};
-
-const stopMyLive = () => {
-  alert('结束直播');
 };
 </script>
 
