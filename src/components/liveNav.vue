@@ -285,10 +285,16 @@ const resetRegisterForm = () => {
 const startMyLive = () => {
   if (!userStore.isLogin) {
     window.$message.error('请先登录');
+  } else if (router.currentRoute.value.fullPath == '/push') {
+    // router.push('/push');
+    console.log('调用开播');
+    emit('openInThisRoute');
   } else {
     router.push('/push');
   }
 };
+
+const emit = defineEmits(['openInThisRoute']);
 </script>
 
 <style scoped lang="scss">

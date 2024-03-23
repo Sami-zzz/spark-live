@@ -1,6 +1,6 @@
 <template>
   <div class="push">
-    <liveNav></liveNav>
+    <liveNav @open-in-this-route="openLiveForm"></liveNav>
     <div class="push-main">
       <div class="push-video">
         <video
@@ -19,6 +19,36 @@
       class="stop-btn"
       >关闭直播</a-button
     >
+    <a-modal
+      v-model:open="liveModalOpen"
+      title="输入直播间标题"
+    >
+      <a-form
+        ref="loginFormRef"
+        :model="liveForm"
+        name="live"
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="handleLiveFinish"
+      >
+        <a-form-item
+          has-feedback
+          name="title"
+          :rules="[{ required: true, message: '请输入直播间标题！' }]"
+        >
+          <a-input v-model:value="liveForm.title" />
+        </a-form-item>
+        <a-form-item :wrapper-col="{ span: 16, offset: 14 }">
+          <a-button
+            type="primary"
+            html-type="submit"
+            >开播</a-button
+          >
+        </a-form-item>
+      </a-form>
+      <template #footer></template>
+    </a-modal>
   </div>
 </template>
 
@@ -28,12 +58,25 @@ import liveNav from '@/components/liveNav.vue';
 import { WebRTCClass } from '@/network/webrtc';
 import router from '@/router';
 import useUserStore from '@/store/user';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 const userStore = useUserStore();
 const rtc = ref<WebRTCClass>();
 const videoRef = ref<HTMLVideoElement>();
 
-// webrtc推流
+// 直播标题表单
+const liveModalOpen = ref(false);
+const liveForm = reactive({
+  title: '',
+});
+
+const openLiveForm = () => {
+  liveModalOpen.value = true;
+};
+const handleLiveFinish = () => {
+  liveModalOpen.value = false;
+  startRTC();
+};
+// webrtc推流方法
 async function getScreen() {
   const event = await navigator.mediaDevices.getDisplayMedia({
     video: true,
@@ -61,12 +104,16 @@ async function getScreen() {
         userStore.push_url +
         '?push_key=' +
         userStore.push_key +
+        '&title=' +
+        liveForm.title +
         '&uid=' +
         userStore.id,
     });
     console.log(res.data);
     if (res.data.code !== 0) {
       console.error('srs没有返回spd');
+      window.$message.error('开播失败');
+      router.push('./');
       return;
     }
     await rtc.value?.setRemoteDescription(res.data.sdp);
@@ -74,6 +121,7 @@ async function getScreen() {
   videoRef.value!.srcObject = event;
 }
 
+// 执行webrtc推流
 function startRTC() {
   const webrtc = new WebRTCClass({ videoEl: videoRef.value! });
   rtc.value = webrtc;
@@ -91,7 +139,7 @@ const stopLive = () => {
 };
 
 onMounted(() => {
-  startRTC();
+  openLiveForm();
 });
 </script>
 
