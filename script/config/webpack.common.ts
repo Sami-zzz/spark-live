@@ -15,7 +15,6 @@ import WindiCSSWebpackPlugin from 'windicss-webpack-plugin';
 import {
   analyzerEnable,
   eslintEnable,
-  htmlWebpackPluginTitle,
   outputDir,
   outputStaticUrl,
   windicssEnable,
@@ -324,7 +323,7 @@ const commonConfig = (isProduction) => {
       // 该插件将为您生成一个HTML5文件，其中包含使用脚本标签的所有Webpack捆绑包
       new HtmlWebpackPlugin({
         filename: 'index.html',
-        title: htmlWebpackPluginTitle,
+        title: 'spark-live',
         template: resolveApp('./public/index.html'),
         hash: true,
         minify: isProduction

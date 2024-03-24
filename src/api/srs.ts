@@ -13,3 +13,13 @@ export const fetchRtcV1Publish = ({
     sdp,
   });
 };
+
+export const fetchRoomList = () => {
+  return axios.get('/api/srs/getroomlist');
+};
+
+export const fetchRoom = (user_id) => {
+  return axios.post('/api/srs/getroom', {
+    user_id: user_id,
+  });
+};

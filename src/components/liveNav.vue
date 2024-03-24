@@ -1,7 +1,10 @@
 <template>
   <div class="live-nav">
     <div class="live-nav-left">
-      <div class="logo">
+      <div
+        class="logo"
+        @click="goHome"
+      >
         <img
           src="@/assets/img/logo.png"
           alt=""
@@ -9,7 +12,8 @@
       </div>
       <div class="nav">
         <ul>
-          <li>首页</li>
+          <li @click="goHome">首页</li>
+          <li @click="goRoom">全部直播</li>
           <li v-if="userStore.isLogin">个人中心</li>
         </ul>
       </div>
@@ -295,6 +299,14 @@ const startMyLive = () => {
 };
 
 const emit = defineEmits(['openInThisRoute']);
+
+const goHome = () => {
+  router.push('/');
+};
+
+const goRoom = () => {
+  router.push('/room');
+};
 </script>
 
 <style scoped lang="scss">

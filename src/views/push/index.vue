@@ -154,7 +154,7 @@ onMounted(() => {
   .push-video {
     background-color: #ccc;
     height: 650px;
-    width: 1400px;
+    width: 1200px;
     .live-video {
       width: 100%;
       height: 100%;

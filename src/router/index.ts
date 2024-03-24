@@ -13,6 +13,16 @@ export const defaultRoutes: RouteRecordRaw[] = [
     name: 'push',
     component: () => import('@/views/push/index.vue'),
   },
+  {
+    path: '/room',
+    name: 'room',
+    component: () => import('@/views/room/index.vue'),
+  },
+  {
+    path: '/pull',
+    name: 'pull',
+    component: () => import('@/views/pull/index.vue'),
+  },
 ];
 
 const router = createRouter({
