@@ -328,8 +328,12 @@ const goRoom = () => {
       ul {
         display: flex;
         li {
-          margin-left: 40px;
+          padding: 0 40px;
           cursor: pointer;
+          &:hover {
+            border-bottom: 3px solid #f80a43;
+            color: #f80a43;
+          }
         }
       }
     }

@@ -149,12 +149,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 740px;
-  background-color: pink;
+  background: url('../../assets/img/push.jpg');
   width: 100%;
   .push-video {
     background-color: #ccc;
     height: 650px;
-    width: 1200px;
+    width: 1160px;
     .live-video {
       width: 100%;
       height: 100%;
