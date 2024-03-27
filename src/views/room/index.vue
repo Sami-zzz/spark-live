@@ -35,7 +35,7 @@ import { onMounted, ref } from 'vue';
 const roomList = ref();
 const getRoomList = async () => {
   const res = await fetchRoomList();
-  roomList.value = res.data.data;
+  roomList.value = res.data.data.list;
 };
 
 const format = (timestamp) => {
