@@ -37,3 +37,12 @@ export const getUserInfoApi = ({ token }: { token: string }) => {
 export const findUserApi = ({ id }: { id: number }) => {
   return axios.get('/api/user/find/' + id);
 };
+
+export const updatePasswordApi = ({ id, userName, password, newPassword }) => {
+  return axios.post('/api/user/update_password', {
+    id,
+    userName,
+    password,
+    newPassword,
+  });
+};

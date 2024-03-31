@@ -14,7 +14,12 @@
         <ul>
           <li @click="goHome">首页</li>
           <li @click="goRoom">全部直播</li>
-          <li v-if="userStore.isLogin">个人中心</li>
+          <li
+            v-if="userStore.isLogin"
+            @click="goCenter"
+          >
+            个人中心
+          </li>
         </ul>
       </div>
     </div>
@@ -306,6 +311,10 @@ const goHome = () => {
 
 const goRoom = () => {
   router.push('/room');
+};
+
+const goCenter = () => {
+  router.push('/center');
 };
 </script>
 

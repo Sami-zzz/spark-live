@@ -23,6 +23,11 @@ export const defaultRoutes: RouteRecordRaw[] = [
     name: 'pull',
     component: () => import('@/views/pull/index.vue'),
   },
+  {
+    path: '/center',
+    name: 'center',
+    component: () => import('@/views/center/index.vue'),
+  },
 ];
 
 const router = createRouter({
