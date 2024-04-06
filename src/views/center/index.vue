@@ -105,12 +105,13 @@
 </template>
 
 <script setup lang="ts">
-import { updatePasswordApi } from '@/api/user';
+import { myliveGiftApi, mysendGiftApi } from '@/api/order';
+import { findUserApi, updatePasswordApi } from '@/api/user';
 import liveNav from '@/components/liveNav.vue';
+import router from '@/router';
 import useUserStore from '@/store/user';
 import type { FormInstance } from 'ant-design-vue';
-import { reactive, ref } from 'vue';
-import router from '@/router';
+import { onMounted, reactive, ref } from 'vue';
 const activeKey = ref('1');
 const userStore = useUserStore();
 /** 修改密码 */
@@ -161,54 +162,59 @@ const resetForm = () => {
 
 /** 我的送礼 */
 
-interface sendGiftDataItem {
-  liveName: string;
-  giftName: string;
-  price: string;
-  sendTime: string;
-}
-const sendGiftData: sendGiftDataItem[] = [
-  {
-    liveName: 'test1',
-    giftName: '大航海',
-    price: '300电池',
-    sendTime: '2020.1.1 20:30:30',
-  },
-  {
-    liveName: 'test1',
-    giftName: '大航海',
-    price: '300电池',
-    sendTime: '2020.1.1 20:30:30',
-  },
-  {
-    liveName: 'test1',
-    giftName: '大航海',
-    price: '300电池',
-    sendTime: '2020.1.1 20:30:30',
-  },
-  {
-    liveName: 'test1',
-    giftName: '大航海',
-    price: '300电池',
-    sendTime: '2020.1.1 20:30:30',
-  },
-];
+const sendGiftData = ref();
+
+const getMySendGift = async () => {
+  const user_id = userStore.id;
+  const res = await mysendGiftApi({ user_id });
+  if (res.data.code == 200) {
+    const giftList = await Promise.all(
+      res.data.data.list.map(async (item) => {
+        const userInfo = await findUserApi({ id: Number(item.live_id) });
+        item.liveName = userInfo.data.data.username;
+        return {
+          liveName: item.liveName,
+          giftName: item.gift_name,
+          price: item.price,
+          sendTime: item.send_time,
+        };
+      })
+    );
+    sendGiftData.value = giftList;
+  } else {
+    return;
+  }
+};
 
 /** 我的礼物 */
-interface myGiftDataItem {
-  userName: string;
-  giftName: string;
-  price: string;
-  sendTime: string;
-}
-const myGiftData: myGiftDataItem[] = [
-  {
-    userName: 'test1',
-    giftName: '大航海',
-    price: '300电池',
-    sendTime: '2020.1.1 20:30:30',
-  },
-];
+const myGiftData = ref();
+
+const getMyLiveGift = async () => {
+  const live_id = userStore.id;
+  const res = await myliveGiftApi({ live_id });
+  if (res.data.code == 200) {
+    const giftList = await Promise.all(
+      res.data.data.list.map(async (item) => {
+        const userInfo = await findUserApi({ id: Number(item.user_id) });
+        item.userName = userInfo.data.data.username;
+        return {
+          userName: item.userName,
+          giftName: item.gift_name,
+          price: item.price,
+          sendTime: item.send_time,
+        };
+      })
+    );
+    myGiftData.value = giftList;
+  } else {
+    return;
+  }
+};
+
+onMounted(() => {
+  getMySendGift();
+  getMyLiveGift();
+});
 </script>
 
 <style lang="scss" scoped>

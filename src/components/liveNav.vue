@@ -224,6 +224,7 @@ const resetLoginForm = () => {
 // 退出登录
 const loginout = () => {
   userStore.loginoutAction();
+  router.push('/');
 };
 
 //

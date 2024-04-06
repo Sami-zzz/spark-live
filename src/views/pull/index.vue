@@ -116,10 +116,13 @@
 <script setup lang="ts">
 import { fetchRoom } from '@/api/srs';
 import { findUserApi } from '@/api/user';
+import { sendGiftApi } from '@/api/order';
 import flvJs from 'flv.js';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import liveNav from '../../components/liveNav.vue';
+import useUserStore from '@/store/user';
+const userStore = useUserStore();
 const pullVideoRef = ref<HTMLVideoElement>();
 const route = useRoute();
 const pullUrl = ref();
@@ -130,9 +133,11 @@ const giftOpen = ref(false);
 const currentGiftId = ref();
 const currentGiftName = ref();
 const currentPrice = ref();
+const liveId = ref();
 // 拉流
 const pullVideo = async () => {
   let user_id = route.query.user_id as string;
+  liveId.value = user_id;
   if (!user_id) {
     return;
   }
@@ -153,7 +158,6 @@ const getUserInfo = async () => {
     return;
   }
   let res = await findUserApi({ id: Number(user_id) });
-  console.log(res);
   username.value = res.data.data.username;
 };
 function playFlv() {
@@ -171,7 +175,6 @@ const format = (timestamp) => {
     .replace(/:\d{1,2}$/, ' ');
 };
 // 点击送礼
-
 const showModal = (giftId, giftName, price) => {
   currentGiftName.value = giftName;
   currentGiftId.value = giftId;
@@ -179,8 +182,24 @@ const showModal = (giftId, giftName, price) => {
   giftOpen.value = true;
 };
 
-const handleGift = (e: MouseEvent) => {
+const handleGift = () => {
+  sendGift();
   giftOpen.value = false;
+};
+
+const sendGift = async () => {
+  const res = await sendGiftApi({
+    user_id: userStore.id,
+    live_id: 1,
+    gift_id: currentGiftId.value,
+    gift_name: currentGiftName.value,
+    price: currentPrice.value,
+  });
+  if (res.data.code == 200) {
+    window.$message.success('成功送出');
+  } else {
+    window.$message.error('送礼失败');
+  }
 };
 
 onMounted(() => {
