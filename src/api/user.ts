@@ -1,15 +1,11 @@
 import axios from 'axios';
 // 用户注册
-export const registerApi = ({
-  username,
-  password,
-}: {
-  username: string;
-  password: string;
-}) => {
+export const registerApi = ({ username, password, address, email }) => {
   return axios.post('/api/user/register', {
     username,
     password,
+    address,
+    email,
   });
 };
 

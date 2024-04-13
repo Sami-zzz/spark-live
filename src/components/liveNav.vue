@@ -126,6 +126,18 @@
                   v-model:value="registerForm.confirmPassword"
                 />
               </a-form-item>
+              <a-form-item
+                label="邮箱"
+                name="email"
+              >
+                <a-input v-model:value="registerForm.email" />
+              </a-form-item>
+              <a-form-item
+                label="地址"
+                name="address"
+              >
+                <a-input v-model:value="registerForm.address" />
+              </a-form-item>
 
               <a-form-item :wrapper-col="{ span: 16, offset: 4 }">
                 <a-button
@@ -164,8 +176,8 @@
 import router from '@/router';
 import useUserStore from '@/store/user';
 import type { Rule } from 'ant-design-vue/es/form';
-import { computed, reactive, ref } from 'vue';
 
+import { computed, reactive, ref } from 'vue';
 const userStore = useUserStore();
 const username = computed(() => {
   return userStore.username;
@@ -236,6 +248,8 @@ const registerForm = reactive({
   username: '',
   password: '',
   confirmPassword: '',
+  address: '',
+  email: '',
 });
 const handleRegisterClick = () => {
   registerModalOpen.value = true;
@@ -272,18 +286,29 @@ const checkConfirmPassword = async (_rule: Rule, value: string) => {
   }
 };
 
+const checkEmail = async (_rule: Rule, value: string) => {
+  if (value === '') {
+    return Promise.reject('请输入邮箱');
+  } else if (!/^\w+(-+.\w+)*@\w+(-.\w+)*.\w+(-.\w+)*$/.test(value)) {
+    return Promise.reject('邮箱格式不匹配');
+  } else {
+    return Promise.resolve();
+  }
+};
+
 const rules: Record<string, Rule[]> = {
   username: [{ required: true, validator: checkUsername, trigger: 'change' }],
   password: [{ required: true, validator: checkPassword, trigger: 'change' }],
   confirmPassword: [
     { required: true, validator: checkConfirmPassword, trigger: 'change' },
   ],
+  email: [{ required: true, validator: checkEmail, trigger: 'change' }],
 };
 
 // 执行注册
 const handleRegisterFinish = (values) => {
-  const { username, password } = values;
-  userStore.registerAction(username, password);
+  const { username, password, address, email } = values;
+  userStore.registerAction(username, password, address, email);
   registerModalOpen.value = false;
   registerFormRef.value.resetFields();
 };

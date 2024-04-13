@@ -70,12 +70,12 @@ onMounted(async () => {
   roomList = await getRoomList();
   otherList.value = JSON.parse(JSON.stringify(roomList));
   otherList.value.shift();
-  console.log(otherList.value);
-  playFlv();
+  if (roomList[0]) {
+    playFlv();
+  }
 });
 
 const goPull = (room) => {
-  console.log(room.user_id);
   router.push({ path: '/pull', query: { user_id: room.user_id } });
 };
 </script>

@@ -10,13 +10,13 @@ class TerminalPrintPlugin {
   apply(compiler: Compiler) {
     compiler.hooks.done.tapAsync('TerminalPrintPlugin', (stats, callback) => {
       const publicPath = stats.compilation.outputOptions.publicPath as string;
-      const port = stats.compilation.options.devServer!.port as number;
+      // const port = stats.compilation.options.devServer!.port as number;
       console.log('  App running at:');
       console.log(
-        `- Local:    ${chalk.cyan(`http://localhost:${port}${publicPath}`)}`
+        `- Local:    ${chalk.cyan(`http://localhost:8000${publicPath}`)}`
       );
       console.log(
-        `- Network:  ${chalk.cyan(`http://${localIPv4!}:${port}${publicPath}`)}`
+        `- Network:  ${chalk.cyan(`http://${localIPv4!}:8000${publicPath}`)}`
       );
       console.log();
       callback();

@@ -1,7 +1,6 @@
 {
   "name": "spark-live",
   "version": "0.0.1",
-  "repository": {},
   "author": "",
   "scripts": {
     "build": "webpack --config ./script/config/webpack.common.ts --env production",
@@ -12,6 +11,7 @@
     "ant-design-vue": "4.1.2",
     "axios": "^1.2.1",
     "billd-html-webpack-plugin": "^1.0.1",
+    "element-china-area-data": "^6.1.0",
     "flv.js": "^1.6.2",
     "naive-ui": "^2.38.1",
     "pinia": "^2.0.33",

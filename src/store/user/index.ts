@@ -15,8 +15,13 @@ const useUserStore = defineStore('user', {
     isLive: false,
   }),
   actions: {
-    async registerAction(username, password) {
-      const registerRes = await registerApi({ username, password });
+    async registerAction(username, password, address, email) {
+      const registerRes = await registerApi({
+        username,
+        password,
+        address,
+        email,
+      });
       if (registerRes.data.code === 200) {
         window.$message.success('注册成功');
       } else {
@@ -38,7 +43,6 @@ const useUserStore = defineStore('user', {
     async fetchUserInfoAction(token) {
       const userInfoRes = await getUserInfoApi({ token });
       if (userInfoRes.data.code === 200) {
-        // window.$message.success('登录成功');
         this.isLogin = true;
         this.id = userInfoRes.data.data.id;
         this.username = userInfoRes.data.data.username;
