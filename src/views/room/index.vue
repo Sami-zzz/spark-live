@@ -12,7 +12,7 @@
           <div class="main__video"></div>
           <div class="main__info">
             <div class="main__title">{{ room.title }}</div>
-            <div class="main__time">{{ format(room.open_time) }}</div>
+            <div class="main__time">{{ formatTime(room.open_time) }}</div>
           </div>
           <a-button
             type="primary"
@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import liveNav from '@/components/liveNav.vue';
 import router from '@/router';
+import moment from 'moment';
 
 import { fetchRoomList } from '@/api/srs';
 import { onMounted, ref } from 'vue';
@@ -38,10 +39,9 @@ const getRoomList = async () => {
   roomList.value = res.data.data.list;
 };
 
-const format = (timestamp) => {
-  return new Date(parseInt(timestamp) * 1000)
-    .toLocaleString()
-    .replace(/:\d{1,2}$/, ' ');
+const formatTime = (timestamp) => {
+  const opentime = moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+  return opentime;
 };
 
 const goPull = (room) => {

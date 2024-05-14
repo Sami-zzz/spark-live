@@ -74,7 +74,7 @@
                   <span class="gift-span">{{ item.liveName }}</span>
                   <span class="gift-span">{{ item.giftName }}</span>
                   <span class="gift-span">{{ item.price }}</span>
-                  <span class="gift-span">{{ item.sendTime }}</span>
+                  <span class="gift-span">{{ format(item.sendTime) }}</span>
                 </a-list-item>
               </template>
             </a-list></a-tab-pane
@@ -93,7 +93,7 @@
                   <span class="gift-span">{{ item.userName }}</span>
                   <span class="gift-span">{{ item.giftName }}</span>
                   <span class="gift-span">{{ item.price }}</span>
-                  <span class="gift-span">{{ item.sendTime }}</span>
+                  <span class="gift-span">{{ format(item.sendTime) }}</span>
                 </a-list-item>
               </template>
             </a-list>
@@ -111,7 +111,9 @@ import liveNav from '@/components/liveNav.vue';
 import router from '@/router';
 import useUserStore from '@/store/user';
 import type { FormInstance } from 'ant-design-vue';
+import moment from 'moment';
 import { onMounted, reactive, ref } from 'vue';
+
 const activeKey = ref('1');
 const userStore = useUserStore();
 /** 修改密码 */
@@ -127,6 +129,12 @@ const formState = reactive<FormState>({
   newPassword: '',
 });
 
+const format = (timestamp) => {
+  const opentime = moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+  return opentime;
+};
+
+// 修改密码
 const updatePassword = async () => {
   const res = await updatePasswordApi({
     id: userStore.id,

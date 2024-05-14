@@ -114,14 +114,15 @@
 </template>
 
 <script setup lang="ts">
+import { sendGiftApi } from '@/api/order';
 import { fetchRoom } from '@/api/srs';
 import { findUserApi } from '@/api/user';
-import { sendGiftApi } from '@/api/order';
+import useUserStore from '@/store/user';
 import flvJs from 'flv.js';
+import moment from 'moment';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import liveNav from '../../components/liveNav.vue';
-import useUserStore from '@/store/user';
 const userStore = useUserStore();
 const pullVideoRef = ref<HTMLVideoElement>();
 const route = useRoute();
@@ -170,9 +171,8 @@ function playFlv() {
 }
 
 const format = (timestamp) => {
-  return new Date(parseInt(timestamp) * 1000)
-    .toLocaleString()
-    .replace(/:\d{1,2}$/, ' ');
+  const opentime = moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+  return opentime;
 };
 // 点击送礼
 const showModal = (giftId, giftName, price) => {
@@ -190,7 +190,7 @@ const handleGift = () => {
 const sendGift = async () => {
   const res = await sendGiftApi({
     user_id: userStore.id,
-    live_id: 1,
+    live_id: liveId.value,
     gift_id: currentGiftId.value,
     gift_name: currentGiftName.value,
     price: currentPrice.value,

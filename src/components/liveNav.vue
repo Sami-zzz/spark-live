@@ -320,8 +320,9 @@ const resetRegisterForm = () => {
 const startMyLive = () => {
   if (!userStore.isLogin) {
     window.$message.error('请先登录');
+  } else if (userStore.status == '0') {
+    window.$message.error('您已被封禁，请联系管理员');
   } else if (router.currentRoute.value.fullPath == '/push') {
-    // router.push('/push');
     console.log('调用开播');
     emit('openInThisRoute');
   } else {
